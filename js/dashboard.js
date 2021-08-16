@@ -2,48 +2,55 @@ const logoutButton = document.getElementById('logout_button')
 const depositButton = document.getElementById('deposit_button')
 const withdrawButton = document.getElementById('withdraw_button')
 
-//get input value
-const depositAmountField = document.getElementById('deposit_money_field')
-const withDrawAmountField = document.getElementById('withdraw_money_field')
-
-//total value 
-let totalDeposit = document.getElementById('deposit_total')
-let totalBalance = document.getElementById('balance_total')
-let totalWithDraw = document.getElementById('withdraw_total')
-
 //logout
-logoutButton.addEventListener('click',() => {
-    window.location.href="index.html"
+logoutButton.addEventListener('click', () => {
+    window.location.href = "index.html"
 })
+
+//get input value
+function getInputVlaue(inputID){
+    const amountField = document.getElementById(inputID)
+    const newValue = amountField.value
+    const finalAmount = parseFloat(newValue)
+    // amountField.value = ' '
+    return finalAmount
+}
+
+//update total values
+function updateTotalValue(totalValueID, moneyAmount){
+    const totalAmount = document.getElementById(totalValueID)
+    const previousAmount = totalAmount.innerText
+    const currentAmount = parseFloat(previousAmount) + moneyAmount
+    totalAmount.innerText = currentAmount
+}
+
+//update total balances
+function updateTotalBalance(balanceID,moneyAmount,isAdd){
+    const totalBalance = document.getElementById(balanceID)
+    const previousBalance = totalBalance.innerText
+
+    isAdd == true ? totalBalance.innerText = parseFloat(previousBalance) + moneyAmount : totalBalance.innerText = parseFloat(previousBalance) - moneyAmount
+}
 
 //deposit
 depositButton.addEventListener('click',() => {
-    const newdepositValue = depositAmountField.value
-
-    //set new deposit value
-    const previousDeposit = totalDeposit.innerText
-    const currentDepositAmount = parseFloat(previousDeposit) + parseFloat(newdepositValue)
-    totalDeposit.innerText = currentDepositAmount
-
-    //setT total balance value
-    const previousBalance = totalBalance.innerText
-    const currentBalance = parseFloat(previousBalance) + parseFloat(newdepositValue)
-    totalBalance.innerText = currentBalance
-    depositAmountField.value = ' '
+    const depositAmount = getInputVlaue('deposit_money_field')
+    if (depositAmount > 0 && depositAmount <= 1000) {
+        updateTotalValue('deposit_total', depositAmount)
+        updateTotalBalance('balance_total', depositAmount, true)
+    }else{
+        document.getElementById('deposit_error_messege').innerHTML = "Amount must be positive numbers or deposit money between $1000 !!"
+    }
 })
 
 //withdraw 
 withdrawButton.addEventListener('click',() => {
-    const newWithDrawValue = withDrawAmountField.value
+    const withDrawAmount = getInputVlaue('withdraw_money_field')
+    if (withDrawAmount > 0 && withDrawAmount <= 1000) {
+        updateTotalValue('withdraw_total', withDrawAmount)
+        updateTotalBalance('balance_total', withDrawAmount, false)
+    } else {
+        document.getElementById('withdraw_error_messege').innerHTML = "Amount must be positive numbers or withdraw money less then $1000 !!"
+    }
 
-    //set new withdraw value 
-    const previousWithDraw = totalWithDraw.innerText
-    const currentWithDrawAmount = parseFloat(previousWithDraw) + parseFloat(newWithDrawValue)
-    totalWithDraw.innerText = currentWithDrawAmount
-    withDrawAmountField.value = ' '
-
-    //update total balance
-    const previousBalance2 = totalBalance.innerText
-    const currentBalance2 = parseFloat(previousBalance2) - parseFloat(currentWithDrawAmount)
-    totalBalance.innerText = currentBalance2
 })
